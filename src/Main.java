@@ -1,3 +1,4 @@
+import Cards.Card;
 import Cards.Deck;
 import Cards.Pack;
 
@@ -6,7 +7,6 @@ import Cards.Pack;
  */
 public class Main {
     public static void main(String[] args) {
-        Pack pack = new Pack();
         Deck deck = new Deck();
     }
 }

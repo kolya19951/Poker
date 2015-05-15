@@ -1,5 +1,8 @@
 package Cards;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 /**
  * Created by Δενθρ on 15.05.2015.
  */
@@ -8,8 +11,24 @@ public class Deck {
     private DeckElement head;
 
     public Deck () {
-        head = null;
+        reset();
+    }
 
+    public void reset() {
+        ArrayList<Card> cardsList = new ArrayList<Card>();
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 13; j++) {
+                cardsList.add(pack.cards[j][i]);
+            }
+        }
+        Random rand = new Random();
+        head = null;
+        int index;
+        for (int i = 52; i > 0; i--) {
+            index = Math.abs(rand.nextInt() % i);
+            this.add(cardsList.get(index));
+            cardsList.remove(index);
+        }
     }
 
     private void add(Card data) {
