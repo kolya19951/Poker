@@ -4,13 +4,15 @@ package Cards;
  * Created by Δενθρ on 15.05.2015.
  */
 public class Deck {
+    private Pack pack = new Pack();
     private DeckElement head;
 
     public Deck () {
         head = null;
+
     }
 
-    public void add(Card data) {
+    private void add(Card data) {
         DeckElement a = new DeckElement();
         a.data = data;
         if(head == null) {
@@ -24,7 +26,7 @@ public class Deck {
 
     public Card retrieve() {
         Card c = head.data;
-        //head = head.next;
+        head = head.next;
         return c;
     }
 }
