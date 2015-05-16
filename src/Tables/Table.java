@@ -12,7 +12,7 @@ public class Table {
     private Deck deck;
     private CommonCards commonCards;
     private Player[] players;
-    private int button;
+    public int button;
     private Dealer dealer;
 
     public Table() {
@@ -28,7 +28,7 @@ public class Table {
             players[p.GetPosition()] = p;
     }
 
-    void ButtonMove () {
+    public void ButtonMove () {
         do {
             button++;
             button =  button % 9;

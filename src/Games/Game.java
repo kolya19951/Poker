@@ -35,8 +35,42 @@ public class Game {
     public void ResetDeck () {
         table.ResetDeck();
     }
-
     public void Fold (int pos) {
         table.Fold(pos);
+    }
+
+    public void Play () {
+        //добавить игроков
+
+        //----------------
+        while (true) {//розигрыш
+            table.ResetDeck();
+            //блайнды
+            table.DealHands();
+            //Префлоп
+            BetRound();
+            table.DealFlop();
+            //Постфлоп
+            BetRound();
+            table.DealTurn();
+            //Тёрн
+            BetRound();
+            table.DealRiver();
+            //Ривер
+            BetRound();
+            //Вскрытие
+            //Покидает ли кто-нибудь стол?
+            //Садится ли кто-нибудь?
+            table.ButtonMove();
+        }
+    }
+
+    private void BetRound () {
+        int gnida = table.button;
+        do {
+            gnida++;
+            gnida = gnida % 9;
+            //гнида ходи
+        } while (gnida != table.button);
     }
 }
