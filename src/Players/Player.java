@@ -6,13 +6,17 @@ import Cards.Hand;
  * Created by Δενθρ on 15.05.2015.
  */
 public class Player {
-    Hand hand;
+    private Hand hand;
+    private int position;
+    private int bankroll;
 
-    Player () {
+    public Player () {
         hand = null;
     }
-    Player (int brll) {
+
+    public Player (int pos) {
         hand = null;
+        position = pos;
     }
 
     void GiveAHand(Hand h) {
@@ -23,5 +27,9 @@ public class Player {
         Hand tmp = hand;
         hand = null;
         return tmp;
+    }
+
+    void Fold () {
+        hand = null;
     }
 }
