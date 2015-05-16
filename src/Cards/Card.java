@@ -15,7 +15,7 @@ public class Card {
     public void GetInfo () {
         int r = GetRank();
         String s = GetSuit();
-        System.out.println("rank: " + r + "; suit: " + s);
+        System.out.println(r + " " + s);
     }
     private int GetRank() {
         return rank.GetRank();

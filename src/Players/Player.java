@@ -12,6 +12,7 @@ public class Player {
 
     public Player () {
         hand = null;
+        position = -1;
     }
 
     public Player (int pos) {
@@ -19,7 +20,14 @@ public class Player {
         position = pos;
     }
 
-    void GiveAHand(Hand h) {
+    public void SetPosition (int pos) {
+        position = pos;
+    }
+    public int GetPosition () {
+        return position;
+    }
+
+    public void GiveAHand(Hand h) {
         hand = h;
     }
 
@@ -29,7 +37,10 @@ public class Player {
         return tmp;
     }
 
-    void Fold () {
+    public void Fold () {
         hand = null;
+    }
+    public void ShowHand () {
+        hand.Show();
     }
 }
