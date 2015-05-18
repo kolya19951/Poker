@@ -11,7 +11,7 @@ public class Dealer {
     private Table table;
     private Deck deck;
 
-    protected Dealer () {
+    public Dealer () {
         table = new Table();
         deck = new Deck();
     }
@@ -20,45 +20,52 @@ public class Dealer {
         deck.reset();
     }
     public void DealFlop () {
-        commonCards.SetFlop(deck.retrieve(), deck.retrieve(), deck.retrieve());
+        table.DealFlop(deck.retrieve(), deck.retrieve(), deck.retrieve());
     }
     public void DealTurn () {
-        commonCards.SetTurn(deck.retrieve());
+        table.DealTurn(deck.retrieve());
     }
     public void DealRiver () {
-        commonCards.SetRiver(deck.retrieve());
+        table.DealRiver(deck.retrieve());
     }
     public void DealHands () {
         for (int i = 0; i < 9; i++) {
-            if (players[i] != null) {
+            if (table.players[i] != null) {
                 Hand h = new Hand(deck.retrieve(), deck.retrieve());
-                players[i].GiveAHand(h);
+                table.players[i].GiveAHand(h);
             }
         }
     }
     public void Play () {
         //добавить игроков
-
         //----------------
         while (true) {//розигрыш
-            table.ResetDeck();
+            ResetDeck();
             //блайнды
-            table.DealHands();
+            DealHands();
             //Префлоп
-            BetRound();
-            table.DealFlop();
+            Round();
+            DealFlop();
             //Постфлоп
-            BetRound();
-            table.DealTurn();
+            Round();
+            DealTurn();
             //Тёрн
-            BetRound();
-            table.DealRiver();
+            Round();
+            DealRiver();
             //Ривер
-            BetRound();
+            Round();
             //Вскрытие
             //Покидает ли кто-нибудь стол?
             //Садится ли кто-нибудь?
             table.ButtonMove();
         }
+    }
+    private void Round() {
+        int gnida = table.button;
+        do {
+            gnida++;
+            gnida = gnida % 9;
+            //гнида ходи
+        } while (gnida != table.button);
     }
 }

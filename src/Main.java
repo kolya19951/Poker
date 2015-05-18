@@ -1,11 +1,11 @@
-import Games.Game;
+import Tables.Dealer;
 
 /**
  * Created by Δενθρ on 15.05.2015.
  */
 public class Main {
     public static void main(String[] args) {
-        Game game1 = new Game();
+        Dealer dealer1 = new Dealer();
         //new players
         /*Player player1 = new Player();
         Player player2 = new Player();
