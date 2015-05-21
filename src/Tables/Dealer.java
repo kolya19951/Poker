@@ -2,6 +2,7 @@ package Tables;
 
 import Cards.Deck;
 import Cards.Hand;
+import Players.Player;
 
 /**
  * Created by Денис on 16.05.2015.
@@ -14,6 +15,12 @@ public class Dealer {
     public Dealer () {
         table = new Table();
         deck = new Deck();
+    }
+
+    public void seatClients () {
+        //добавляем нового игрока
+        Player player1 = new Player(nick, IP);
+        table.addPlayer(player1);
     }
 
     public void ResetDeck() {
