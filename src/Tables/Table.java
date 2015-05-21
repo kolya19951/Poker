@@ -21,7 +21,15 @@ public class Table {
     }
 
     public void addPlayer(Player p) {
+        if (p != null) {
             players[p.GetPosition()] = p;
+        }
+    }
+
+    public void addPlayers (Player... players) {
+        for (int i = 0; i < players.length; i++) {
+            addPlayer(players[i]);
+        }
     }
     public void DealFlop (Card c1, Card c2, Card c3) {
         commonCards.SetFlop(c1, c2, c3);

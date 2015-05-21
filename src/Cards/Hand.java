@@ -16,4 +16,7 @@ public class Hand {
         c1.GetInfo();
         c2.GetInfo();
     }
+    public String toString(){
+        return c1.toString() + "&" + c2.toString();
+    }
 }

@@ -1,3 +1,4 @@
+import Lan.Server;
 import Tables.Dealer;
 
 /**

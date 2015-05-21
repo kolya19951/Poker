@@ -27,6 +27,10 @@ public class Card {
     public void SetRank (int r) {
         rank = new Rank(r);
     }
+
+    public String toString(){
+        return rank.toString() + " " + suit.GetSuit();
+    }
 }
 
 class Suit {
@@ -85,5 +89,9 @@ class Rank {
 
     int GetRank () {
         return index + 2;
+    }
+
+    public String toString() {
+        return Byte.toString(index);
     }
 }

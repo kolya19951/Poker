@@ -2,6 +2,7 @@ package Tables;
 
 import Cards.Deck;
 import Cards.Hand;
+import Lan.Server;
 import Players.Player;
 
 /**
@@ -19,8 +20,9 @@ public class Dealer {
 
     public void seatClients () {
         //добавляем нового игрока
-        Player player1 = new Player(nick, IP);
-        table.addPlayer(player1);
+        Server server = new Server();
+        Player[] players = server.ConnectPlayers();
+        table.addPlayers(players);
     }
 
     public void ResetDeck() {
@@ -70,9 +72,16 @@ public class Dealer {
     private void Round() {
         int gnida = table.button;
         do {
-            gnida++;
-            gnida = gnida % 9;
-            //гнида ходи
+            gnidaMove(gnida);
+            //Калян, напиши тут код, который пошлет запрос игроку gnida запрос на ход
+            table.players[gnida].Send("You turn");
         } while (gnida != table.button);
+    }
+
+    private void gnidaMove (int g) {
+        do {
+            g++;
+            g =  g % 9;
+        } while (table.players[g] == null);
     }
 }
