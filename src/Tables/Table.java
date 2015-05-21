@@ -13,8 +13,11 @@ public class Table {
     private CommonCards commonCards;
     public Player[] players;
     public int button;
+    public int bank;
 
     public Table() {
+        button = 0;
+        bank = 0;
         commonCards = new CommonCards();
         players = new Player[9];
         for (int i = 0; i < 9; i++) players[i] = null;
@@ -48,13 +51,13 @@ public class Table {
     }
     public void ShowCards () {
         System.out.println("flop : ");
-        commonCards.ShowFlop();
+        //commonCards.ShowFlop();
         System.out.println();
         System.out.println("turn : ");
-        commonCards.ShowTurn();
+        //commonCards.ShowTurn();
         System.out.println();
         System.out.println("river : ");
-        commonCards.ShowRiver();
+        //commonCards.ShowRiver();
         System.out.println();
         for (int i = 0; i < 9; i++) {
             if (players[i] != null) {

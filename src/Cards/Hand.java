@@ -13,10 +13,10 @@ public class Hand {
     }
 
     public void Show() {
-        c1.GetInfo();
-        c2.GetInfo();
+        //c1.GetInfo();
+        //c2.GetInfo();
     }
     public String toString(){
-        return c1.toString() + "&" + c2.toString();
+        return c1.ToString() + "&" + c2.ToString() + ".";
     }
 }

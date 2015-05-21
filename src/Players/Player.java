@@ -43,6 +43,26 @@ public class Player {
         }
     }
 
+    public String Get () {
+        String s = "Error";
+        try {
+            s = in.readUTF();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return s;
+    }
+
+    public int GetInt () {
+        int data = -2;
+        try {
+            data = in.readInt();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
     public void setPlayer(Socket st, int c) {
         count = c;
         player = st;

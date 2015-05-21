@@ -29,7 +29,7 @@ public class CommonCards {
         river = null;
     }
 
-    public void ShowFlop () {
+    /*public void ShowFlop () {
         flop.show();
     }
     public void ShowTurn () {
@@ -37,7 +37,7 @@ public class CommonCards {
     }
     public void ShowRiver () {
         river.GetInfo();
-    }
+    }*/
 }
 
 class Flop {
@@ -58,11 +58,11 @@ class Flop {
         this.c3 = c3;
     }
 
-    public void show() {
+    /*public void show() {
         c1.GetInfo();
         c2.GetInfo();
         c3.GetInfo();
-    }
+    }*/
     void Destroy () {
         c1 = null;
         c2 = null;

@@ -48,21 +48,31 @@ public class Dealer {
     public void Play () {
         //добавить игроков
         //----------------
+        table.bank = 0;
         while (true) {//розигрыш
+            table.bank = 0;
             ResetDeck();
             //блайнды
             DealHands();
             //Префлоп
+            System.out.println("Preflop started");
             Round();
+            System.out.println("Preflop end");
             DealFlop();
+            System.out.println("Postflop started");
             //Постфлоп
             Round();
+            System.out.println("Postflop ended");
             DealTurn();
+            System.out.println("Turn started");
             //Тёрн
             Round();
+            System.out.println("Turn finished");
             DealRiver();
+            System.out.println("River started");
             //Ривер
             Round();
+            System.out.println("Kto pobedil sami reshayte");
             //Вскрытие
             //Покидает ли кто-нибудь стол?
             //Садится ли кто-нибудь?
@@ -71,17 +81,38 @@ public class Dealer {
     }
     private void Round() {
         int gnida = table.button;
+        int currentBet = 0;
+        int previousBet;
         do {
-            gnidaMove(gnida);
+            previousBet = currentBet;
+            gnida = gnidaMove(gnida);
             //Калян, напиши тут код, который пошлет запрос игроку gnida запрос на ход
             table.players[gnida].Send("You turn");
-        } while (gnida != table.button);
+            // ждем ответа от игрока гнида
+            int massage;
+            massage = table.players[gnida].GetInt();
+            if (massage == -1) {
+                table.players[gnida].Fold();
+                System.out.println("player " + gnida + " fold");
+            } else {
+                if (massage == 0) {
+                    System.out.println("player " + gnida + " check/call");
+                } else {
+                    System.out.println("player " + gnida + " rize" + massage);
+                    currentBet += massage;
+                    table.bank += currentBet + massage;
+                    System.out.println("Bank" + table.bank);
+                }
+            }
+        } while (!(gnida == table.button && previousBet == currentBet));
     }
 
-    private void gnidaMove (int g) {
+    private int gnidaMove (int g) {
+        int gTmp = g;
         do {
-            g++;
-            g =  g % 9;
-        } while (table.players[g] == null);
+            gTmp++;
+            gTmp =  gTmp % 9;
+        } while (table.players[gTmp] == null);
+        return gTmp;
     }
 }

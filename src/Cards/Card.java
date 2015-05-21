@@ -4,32 +4,159 @@ package Cards;
  * Created by Денис on 15.05.2015.
  */
 public class Card {
-    private Suit suit;
-    private Rank rank;
+    public byte rank;
+    public char suit;
+    public byte suitNum;
 
-    public Card (int r, String s) {
-        rank = new Rank(r);
-        suit = new Suit(s);
-    }
-
-    public void GetInfo () {
-        int r = GetRank();
-        String s = GetSuit();
-        System.out.println(r + " " + s);
-    }
-    private int GetRank() {
-        return rank.GetRank();
-    }
-    private String GetSuit () {
-        return suit.GetSuit();
+    public Card()
+    {
     }
 
-    public void SetRank (int r) {
-        rank = new Rank(r);
+    public Card(byte r, byte s)
+    {
+        rank = (byte) (r);//here!!!!!!!!!!!!!!!! - 2
+        suitNum = s;
+        if (s == 0)
+            suit = '?';
+        if (s == 1)
+            suit = '?';
+        if (s == 2)
+            suit = '?';
+        if (s == 3)
+            suit = '?';
     }
 
-    public String toString(){
-        return rank.toString() + " " + suit.GetSuit();
+    /*public Card(String s)
+    {
+        //проверка формы ввода
+        boolean two1 = false;
+        boolean two2 = false;
+        boolean three2 = false;
+        boolean three3 = false;
+
+        //1 sym 2
+        if (s.length() == 2)
+        {
+            two1 = ((s.ge >= '2') && (s[0] <= '9')) || (s[0] == 'J') || (s[0] == 'j') || (s[0] == 'Q') || (s[0] == 'q') || (s[0] == 'K') || (s[0] == 'k') || (s[0] == 'A') || (s[0] == 'a');
+            two2 = (s[1] == '/') || (s[1] == '*') || (s[1] == '-') || (s[1] == '+') || (s[1] == '?') || (s[1] == '?') || (s[1] == '?') || (s[1] == '?');
+            if (two1 && two2)
+            {
+                if ((s[1] == '/') || (s[1] == '?'))
+                    suit = '?';
+                if ((s[1] == '*') || (s[1] == '?'))
+                    suit = '?';
+                if ((s[1] == '-') || (s[1] == '?'))
+                    suit = '?';
+                if ((s[1] == '+') || (s[1] == '?'))
+                    suit = '?';
+
+                if ((s[0] > '1') && (s[0] <= '9'))
+                {
+                    rank = (byte)s[0];
+                    rank -= 48;
+                }
+
+                if ((s[0] == 'j') || (s[0] == 'J'))
+                    rank = 11;
+                if ((s[0] == 'q') || (s[0] == 'Q'))
+                    rank = 12;
+                if ((s[0] == 'k') || (s[0] == 'K'))
+                    rank = 13;
+                if ((s[0] == 'a') || (s[0] == 'A'))
+                    rank = 14;
+            }
+        }
+        else
+        {
+            if ((s.Length == 3) && (s[0] == '1'))
+            {
+                three2 = (s[1] == '0') || (s[1] == '1') || (s[1] == '2') || (s[1] == '3') || (s[1] == '4');
+                three3 = (s[2] == '/') || (s[2] == '*') || (s[2] == '-') || (s[2] == '+') || (s[2] == '?') || (s[2] == '?') || (s[2] == '?') || (s[2] == '?');
+                if (three2 && three3)
+                {
+                    if (s[1] == '0')
+                        rank = 10;
+                    if (s[1] == '1')
+                        rank = 11;
+                    if (s[1] == '2')
+                        rank = 12;
+                    if (s[1] == '3')
+                        rank = 13;
+                    if (s[1] == '4')
+                        rank = 14;
+
+                    if ((s[2] == '/') || (s[2] == '?'))
+                        suit = '?';
+                    if ((s[2] == '*') || (s[2] == '?'))
+                        suit = '?';
+                    if ((s[2] == '-') || (s[2] == '?'))
+                        suit = '?';
+                    if ((s[2] == '+') || (s[2] == '?'))
+                        suit = '?';
+                }
+                else
+                {
+                    rank = 2;
+                    suit = '?';
+                }
+            }
+            else
+            {
+                rank = 2;
+                suit = '?';
+            }
+        }
+
+        if (suit == '?')
+            suitNum = 0;
+        if (suit == '?')
+            suitNum = 1;
+        if (suit == '?')
+            suitNum = 2;
+        if (suit == '?')
+            suitNum = 3;
+    }*/
+
+    public Card(Card c)
+    {
+        rank = c.rank;
+        suit = c.suit;
+        suitNum = c.suitNum;
+    }
+
+    public String ToString()
+    {
+        String s = new String("");
+        if (rank != 0)
+        {
+            if (rank < 11)
+                s = Integer.toString(rank);
+            else
+            {
+                //if (rank == 10)
+                //    s = "T";
+                if (rank == 11)
+                    s = "J";
+                if (rank == 12)
+                    s = "Q";
+                if (rank == 13)
+                    s = "K";
+                if (rank == 14)
+                    s = "A";
+            }
+            s = s + "," + Byte.toString(suitNum);
+            //s = s + "," + Byte.toString((byte) 0);
+            //s = s + "," + Byte.toString((byte) 0);
+            /*if (suit == '?')
+                s = s + "?";????
+            if (suit == '?')
+                s = s + "?";
+            if (suit == '?')
+                s = s + "?";
+            if (suit == '?')
+                s = s + "?";*/
+        }
+        return s;
     }
 }
 
