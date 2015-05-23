@@ -5,7 +5,7 @@ import Players.Player;
 import java.net.ServerSocket;
 
 public class SocketServer {
-    final static int NUMBER_OF_PLAYERS = 2;
+    final static int NUMBER_OF_PLAYERS = 6;
     ServerSocket ss;
     int port = 1488;
     Player[] players = new Player[NUMBER_OF_PLAYERS];

@@ -10,7 +10,9 @@ public class Server {
         MainForm frame = new MainForm(sock);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
+        for (int i = 0; i < 6; i++) {
+            sock.players[i] = new Player();
+        }
         try {
             do {
                 sock.players[sock.count].setPlayer(sock.ss.accept(), sock.count);

@@ -6,17 +6,11 @@ package Cards;
 public class Hand {
     public Card c1;
     public Card c2;
-
     public Hand (Card card1, Card card2) {
         c1 = card1;
         c2 = card2;
     }
-
-    public void Show() {
-        //c1.GetInfo();
-        //c2.GetInfo();
-    }
     public String toString(){
-        return c1.ToString() + "&" + c2.ToString() + ".";
+        return c1.toString() + "&" + c2.toString() + ".";
     }
 }

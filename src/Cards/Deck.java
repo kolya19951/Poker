@@ -49,22 +49,14 @@ public class Deck {
         return c;
     }
 }
-
 class DeckElement {
     DeckElement next;
     Card data;
-
     DeckElement () {
         next = null;
         data = null;
     }
-
-    DeckElement (Card data) {
-        next = null;
-        this.data = data;
-    }
 }
-
 class Pack {
     public Card[][] cards = new Card[13][4];
 

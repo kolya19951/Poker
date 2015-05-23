@@ -10,12 +10,14 @@ import Players.Player;
  * Created by Δενθρ on 15.05.2015.
  */
 public class Table {
+    public int BB;
     private CommonCards commonCards;
     public Player[] players;
     public int button;
     public int bank;
 
     public Table() {
+        BB = 2;
         button = 0;
         bank = 0;
         commonCards = new CommonCards();
@@ -24,15 +26,19 @@ public class Table {
     }
 
     public void addPlayer(Player p) {
-        if (p != null) {
-            players[p.GetPosition()] = p;
-        }
+        //if (p != null) {
+        //if (p.getPosition() != -1) {
+        //    players[p.GetPosition()] = p;
+        //}
     }
 
     public void addPlayers (Player... players) {
-        for (int i = 0; i < players.length; i++) {
-            addPlayer(players[i]);
-        }
+        //for (int i = 0; i < players.length; i++) {
+            //players[i] = new Player();
+            //players[i].Init();
+            //addPlayer(players[i]);
+        //}
+        this.players = players;
     }
     public void DealFlop (Card c1, Card c2, Card c3) {
         commonCards.SetFlop(c1, c2, c3);
@@ -49,7 +55,7 @@ public class Table {
             button =  button % 9;
         } while (players[button] == null);
     }
-    public void ShowCards () {
+    /*public void ShowCards () {
         System.out.println("flop : ");
         //commonCards.ShowFlop();
         System.out.println();
@@ -66,5 +72,5 @@ public class Table {
                 System.out.println();
             }
         }
-    }
+    }*/
 }

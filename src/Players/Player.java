@@ -9,6 +9,7 @@ import java.net.Socket;
  * Created by Δενθρ on 15.05.2015.
  */
 public class Player {
+    public boolean isInGame;
     private InputStream sin;
     private OutputStream sout;
     private DataInputStream in;
@@ -30,14 +31,29 @@ public class Player {
         position = pos;
     }
 
+    public String getLogin () {
+        return login;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
     public void Init () {
         player = null;
         login = null;
     }
 
-    public void Send (String s) {
+    public void send(String s) {
         try {
             out.writeUTF(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendInt(int x) {
+        try {
+            out.writeInt(x);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,6 +113,36 @@ public class Player {
         }
     }
 
+    public void initAMoney (int m) {
+        bankroll = m;
+        try {
+            out.writeUTF("you started money");
+            out.writeUTF(Integer.toString(m));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void giveAMoney(int m) {
+        bankroll += m;
+        try {
+            out.writeUTF("you money");
+            out.writeInt(m);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void takeAMoney(int m) {
+        bankroll -= m;
+        try {
+            out.writeUTF("give me a money");
+            out.writeInt(m);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     Hand TakeAHand() {
         Hand tmp = hand;
         hand = null;
@@ -105,8 +151,6 @@ public class Player {
 
     public void Fold () {
         hand = null;
-    }
-    public void ShowHand () {
-        hand.Show();
+        isInGame = false;
     }
 }
