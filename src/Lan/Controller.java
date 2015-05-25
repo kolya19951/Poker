@@ -11,5 +11,7 @@ public class Controller {
         this.players = players;
     }
 
-    public void reset
+    public void reset() {
+
+    }
 }
