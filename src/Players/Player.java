@@ -21,17 +21,19 @@ public class Player {
     private int position;
     private int bankroll;
 
-    public Player () {
+    public Player() {
         hand = null;
         position = -1;
+        bankroll = 0;
     }
 
-    public Player (int pos) {
+    public Player(int pos) {
         hand = null;
         position = pos;
+        bankroll = 0;
     }
 
-    public String getLogin () {
+    public String getLogin() {
         return login;
     }
 
@@ -39,27 +41,41 @@ public class Player {
         return position;
     }
 
-    public void Init () {
+    public void Init() {
         player = null;
         login = null;
     }
 
-    public void send(String s) {
+    public void sendUTF(String s) {
         try {
             out.writeUTF(s);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("send " + s);
     }
+
     public void sendInt(int x) {
         try {
             out.writeInt(x);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("send " + x);
     }
 
-    public String Get () {
+    public boolean readBoolean() {
+        boolean b = false;
+        try {
+            b = in.readBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return b;
+    }
+
+    public String Get() {
         String s = "Error";
         try {
             s = in.readUTF();
@@ -69,7 +85,7 @@ public class Player {
         return s;
     }
 
-    public int GetInt () {
+    public int GetInt() {
         int data = -2;
         try {
             data = in.readInt();
@@ -94,12 +110,18 @@ public class Player {
         position = count;//здесь можно попросить позицию
         System.out.print(login);
         System.out.println(" - " + count + "Player");
+        setBankroll(1000);
     }
 
-    public void SetPosition (int pos) {
+    public void setBankroll (int b) {
+        bankroll = b;
+    }
+
+    public void SetPosition(int pos) {
         position = pos;
     }
-    public int GetPosition () {
+
+    public int GetPosition() {
         return position;
     }
 
@@ -113,14 +135,18 @@ public class Player {
         }
     }
 
-    public void initAMoney (int m) {
+    public int getBankroll () {
+        return bankroll;
+    }
+
+    public void initAMoney(int m) {
         bankroll = m;
-        try {
+        /*try {
             out.writeUTF("you started money");
-            out.writeUTF(Integer.toString(m));
+            out.writeInt(m);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void giveAMoney(int m) {
@@ -135,12 +161,12 @@ public class Player {
 
     public void takeAMoney(int m) {
         bankroll -= m;
-        try {
+        /*try {
             out.writeUTF("give me a money");
             out.writeInt(m);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     Hand TakeAHand() {
@@ -149,7 +175,7 @@ public class Player {
         return tmp;
     }
 
-    public void Fold () {
+    public void Fold() {
         hand = null;
         isInGame = false;
     }

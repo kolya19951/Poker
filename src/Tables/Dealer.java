@@ -2,6 +2,7 @@ package Tables;
 
 import Cards.Deck;
 import Cards.Hand;
+import Lan.Controller;
 import Lan.Server;
 import Players.Player;
 
@@ -10,10 +11,12 @@ import Players.Player;
  */
 public class Dealer {
 
+    private Controller controller;
     private Table table;
     private Deck deck;
 
     public Dealer () {
+        controller = new Controller();
         table = new Table();
         deck = new Deck();
     }
@@ -26,18 +29,17 @@ public class Dealer {
         for (int i = 0; i < 6; i++) {
             //if (table.players[i] != null) {
             if (table.players[i].getPosition() != -1) {
-                table.players[i].send("game start info");
+                table.players[i].sendUTF("game start info");
                 for (int j = 0; j < 6; j++) {
                     //if (players[j] == null) {
                     if (players[j].getPosition() == -1) {
-                        //players[i].send("player");
-                        players[i].sendInt(j);
-                        players[i].send("free seat");
+                        players[i].sendInt(j);//позиция
+                        players[i].sendUTF("free seat");
+                        players[i].sendInt(table.players[j].getBankroll());
                     } else {
-                        //players[i].send("player");
                         players[i].sendInt(j);
-                        players[i].send(table.players[j].getLogin());
-                        players[i].initAMoney(1000);
+                        players[i].sendUTF(table.players[j].getLogin());
+                        players[i].sendInt(table.players[j].getBankroll());
                     }
                 }
             }
@@ -60,9 +62,10 @@ public class Dealer {
         for (int i = 0; i < 6; i++) {
             //if (table.players[i] != null) {
             if (table.players[i].getPosition() != -1) {
-                table.players[i].send("you hand");
+                table.players[i].sendUTF("you hand");
                 Hand h = new Hand(deck.retrieve(), deck.retrieve());
-                table.players[i].GiveAHand(h);
+                controller.giveAHand(table.players[i], h);
+                //table.players[i].GiveAHand(h);
                 table.players[i].isInGame = true;
             }
         }
@@ -102,39 +105,47 @@ public class Dealer {
         }
     }
     private void Round() {
+        Player hodok;
         int gnida = table.button;
         int currentBet = 0;
         int previousBet;
         gnida = gnidaMove(gnida);
-        table.players[gnida].send("Small blind");
+        hodok = table.players[gnida];
+        hodok.sendUTF("small blind");
+        hodok.takeAMoney(table.BB / 2);
+        controller.setBankroll(hodok, hodok.getBankroll());
         previousBet = currentBet;
         currentBet += table.BB/2;
         table.bank += currentBet;
-        System.out.println(table.players[gnida].getLogin()+ " is Small Blind");
+        System.out.println(hodok.getLogin()+ " is Small Blind");
         System.out.println("Bank" + table.bank);
         gnida = gnidaMove(gnida);
-        table.players[gnida].send("Big blind");
+        hodok = table.players[gnida];
+        hodok.sendUTF("big blind");
+        hodok.takeAMoney(table.BB);
+        controller.setBankroll(hodok, hodok.getBankroll());
         previousBet = currentBet;
         currentBet += table.BB/2;
         table.bank += currentBet;
-        System.out.println(table.players[gnida].getLogin()+ " is Big Blind");
+        System.out.println(hodok.getLogin()+ " is Big Blind");
         System.out.println("Bank" + table.bank);
         do {
             previousBet = currentBet;
             gnida = gnidaMove(gnida);
+            hodok = table.players[gnida];
             //Калян, напиши тут код, который пошлет запрос игроку gnida запрос на ход
-            table.players[gnida].send("You turn");
+            hodok.sendUTF("You turn");
             // ждем ответа от игрока гнида
             int massage;
-            massage = table.players[gnida].GetInt();
+            massage = hodok.GetInt();
             if (massage == -1) {
-                table.players[gnida].Fold();
-                System.out.println(table.players[gnida].getLogin() + " fold");
+                hodok.Fold();
+                System.out.println(hodok.getLogin() + " fold");
             } else {
                 if (massage == 0) {
-                    System.out.println(table.players[gnida].getLogin() + " check/call");
+                    System.out.println(hodok.getLogin() + " check/call");
                 } else {
-                    System.out.println(table.players[gnida].getLogin()+ " rize " + massage + "BB");
+                    System.out.println(hodok.getLogin()+ " rize " + massage + "BB");
                     previousBet = currentBet;
                     currentBet += massage*table.BB;
                     table.bank += currentBet;
