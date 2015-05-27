@@ -12,7 +12,8 @@ public class Controller {
     public Controller() {
 
     }
-    Controller (Player... players) {
+
+    Controller(Player... players) {
         this.players = players;
     }
 
@@ -27,7 +28,27 @@ public class Controller {
     }
 
     public void setBankroll(Player p, int b) {
-        p.sendInt(b);
+        for (int i = 0; i < 6; i++) {
+            if (players[i] == p) {
+                p.sendUTF("set bankroll");
+                p.sendInt(b);
+            } else {
+                p.sendUTF("change player");
+                p.sendInt(i);
+                p.sendUTF("bankroll");
+                p.sendInt(players[i].getBankroll());
+            }
+        }
+    }
+
+    public void setBet(Player p, int b) {
+        for (int i = 0; i < 6; i++) {
+            if (players[i].getPosition() != -1)
+            players[i].sendUTF("change player");
+            p.sendInt(p.GetPosition());
+            p.sendUTF("bet");
+            p.sendInt(players[i].getBet());
+        }
     }
 
     public boolean changeFlop() {

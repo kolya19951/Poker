@@ -20,11 +20,13 @@ public class Player {
     private Hand hand;
     private int position;
     private int bankroll;
+    private int bet;
 
     public Player() {
         hand = null;
         position = -1;
         bankroll = 0;
+        bet = 0;
     }
 
     public Player(int pos) {
@@ -123,6 +125,10 @@ public class Player {
 
     public int GetPosition() {
         return position;
+    }
+
+    public int getBet() {
+        return bet;
     }
 
     public void GiveAHand(Hand h) {
