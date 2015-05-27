@@ -22,11 +22,11 @@ public class Card {
 
     public String toString() {
         String s = "";
-        if (rank >= 11 && rank <= 14) {
+        if (rank >= 10 && rank <= 14) {
             switch (rank) {
-                //case 10 :
-                //   s = "T";
-                //    break;
+                case 10 :
+                    s = "T";
+                    break;
                 case 11 :
                     s = "J";
                     break;
@@ -40,8 +40,8 @@ public class Card {
                     s = "A";
                     break;
             }
-        } else s = rank <= 10 && rank >= 2 ? Byte.toString(rank) : "N";
-        s = suit >= 0 && suit <= 3 ? s + "," + Byte.toString(suit) : s + "," + "N";
+        } else s = rank <= 9 && rank >= 2 ? Byte.toString(rank) : "N";
+        s = suit >= 0 && suit <= 3 ? s + Byte.toString(suit) : s + "," + "N";
         return s;
     }
 }

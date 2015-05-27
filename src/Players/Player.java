@@ -14,7 +14,7 @@ public class Player {
     private OutputStream sout;
     private DataInputStream in;
     private DataOutputStream out;
-    private Socket player;
+    private Socket socket;
     private String login;
     private int count;
     private Hand hand;
@@ -23,28 +23,22 @@ public class Player {
     private int bet;
 
     public Player() {
+        isInGame = false;
         hand = null;
         position = -1;
         bankroll = 0;
         bet = 0;
     }
 
-    public Player(int pos) {
-        hand = null;
-        position = pos;
-        bankroll = 0;
-    }
-
     public String getLogin() {
         return login;
     }
-
     public int getPosition() {
         return position;
     }
 
     public void Init() {
-        player = null;
+        socket = null;
         login = null;
     }
 
@@ -98,11 +92,12 @@ public class Player {
     }
 
     public void setPlayer(Socket st, int c) {
+        isInGame = true;
         count = c;
-        player = st;
+        socket = st;
         try {
-            sin = player.getInputStream();
-            sout = player.getOutputStream();
+            sin = socket.getInputStream();
+            sout = socket.getOutputStream();
             in = new DataInputStream(sin);
             out = new DataOutputStream(sout);
             login = in.readUTF();
@@ -165,8 +160,9 @@ public class Player {
         }
     }
 
-    public void takeAMoney(int m) {
+    public void takeMoney(int m) {
         bankroll -= m;
+        bet += m;
         /*try {
             out.writeUTF("give me a money");
             out.writeInt(m);

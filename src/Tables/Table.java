@@ -11,7 +11,7 @@ import Players.Player;
  */
 public class Table {
     public int BB;
-    private CommonCards commonCards;
+    public CommonCards commonCards;
     public Player[] players;
     public int button;
     public int bank;

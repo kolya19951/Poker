@@ -16,8 +16,8 @@ public class Dealer {
     private Deck deck;
 
     public Dealer () {
-        controller = new Controller();
         table = new Table();
+        controller = new Controller(table.players);
         deck = new Deck();
     }
 
@@ -44,6 +44,7 @@ public class Dealer {
                 }
             }
         }
+        controller.resetPlayers(table.players);
     }
 
     public void ResetDeck() {
@@ -62,9 +63,8 @@ public class Dealer {
         for (int i = 0; i < 6; i++) {
             //if (table.players[i] != null) {
             if (table.players[i].getPosition() != -1) {
-                table.players[i].sendUTF("you hand");
                 Hand h = new Hand(deck.retrieve(), deck.retrieve());
-                controller.giveAHand(table.players[i], h);
+                controller.setHand(table.players[i], h);
                 //table.players[i].GiveAHand(h);
                 table.players[i].isInGame = true;
             }
@@ -81,20 +81,23 @@ public class Dealer {
             DealHands();
             //Префлоп
             System.out.println("Preflop started");
-            Round();
+            Round1();
             System.out.println("Preflop end");
             DealFlop();
             System.out.println("Postflop started");
+            controller.setFlop(table.commonCards.flop.c1, table.commonCards.flop.c1, table.commonCards.flop.c3);
             //Постфлоп
             Round();
             System.out.println("Postflop ended");
             DealTurn();
             System.out.println("Turn started");
+            controller.setTurn(table.commonCards.turn);
             //Тёрн
             Round();
             System.out.println("Turn finished");
             DealRiver();
             System.out.println("River started");
+            controller.setTurn(table.commonCards.river);
             //Ривер
             Round();
             System.out.println("Kto pobedil sami reshayte");
@@ -104,34 +107,37 @@ public class Dealer {
             table.ButtonMove();
         }
     }
-    private void Round() {
+    private void Round1() {
+        int rememberLastBetPlayerIndex;
+        int rememberLastBetPlayerBet;
         Player hodok;
         int gnida = table.button;
         int currentBet = 0;
-        int previousBet;
         gnida = gnidaMove(gnida);
         hodok = table.players[gnida];
+        //sb
+        System.out.println(hodok.getLogin() + " is Small Blind");
+        System.out.println("Bank" + table.bank);
+        controller.setBank(table.bank);
         hodok.sendUTF("small blind");
-        hodok.takeAMoney(table.BB / 2);
-        controller.setBankroll(hodok, hodok.getBankroll());
-        previousBet = currentBet;
-        currentBet += table.BB/2;
-        table.bank += currentBet;
-        System.out.println(hodok.getLogin()+ " is Small Blind");
-        System.out.println("Bank" + table.bank);
+        hodok.takeMoney(table.BB / 2);
+        controller.setBankroll(hodok);
+        controller.setBet(hodok);
         gnida = gnidaMove(gnida);
-        hodok = table.players[gnida];
-        hodok.sendUTF("big blind");
-        hodok.takeAMoney(table.BB);
-        controller.setBankroll(hodok, hodok.getBankroll());
-        previousBet = currentBet;
-        currentBet += table.BB/2;
-        table.bank += currentBet;
-        System.out.println(hodok.getLogin()+ " is Big Blind");
+        //bb
+        System.out.println(hodok.getLogin() + " is Big Blind");
         System.out.println("Bank" + table.bank);
+        controller.setBank(table.bank);
+        hodok.sendUTF("big blind");
+        hodok.takeMoney(table.BB);
+        controller.setBankroll(hodok);
+        controller.setBet(hodok);
+        currentBet = table.BB;
+        table.bank += currentBet;
+        rememberLastBetPlayerBet = currentBet;
+        rememberLastBetPlayerIndex = gnida;
+        gnida = gnidaMove(gnida);
         do {
-            previousBet = currentBet;
-            gnida = gnidaMove(gnida);
             hodok = table.players[gnida];
             //Калян, напиши тут код, который пошлет запрос игроку gnida запрос на ход
             hodok.sendUTF("You turn");
@@ -141,18 +147,76 @@ public class Dealer {
             if (massage == -1) {
                 hodok.Fold();
                 System.out.println(hodok.getLogin() + " fold");
+                controller.fold(hodok);
             } else {
                 if (massage == 0) {
                     System.out.println(hodok.getLogin() + " check/call");
+                    table.bank += currentBet;
+                    hodok.takeMoney(currentBet);
+                    controller.setBankroll(hodok);
+                    controller.setBet(hodok);
+                    System.out.println("Bank" + table.bank);
+                    controller.setBank(table.bank);
                 } else {
                     System.out.println(hodok.getLogin()+ " rize " + massage + "BB");
-                    previousBet = currentBet;
-                    currentBet += massage*table.BB;
+                    currentBet = massage;
+                    rememberLastBetPlayerIndex = hodok.getPosition();
+                    rememberLastBetPlayerBet = currentBet;
                     table.bank += currentBet;
+                    hodok.takeMoney(massage);
+                    controller.setBankroll(hodok);
+                    controller.setBet(hodok);
                     System.out.println("Bank" + table.bank);
+                    controller.setBank(table.bank);
                 }
             }
-        } while (!(gnida == table.button && previousBet == currentBet));
+            gnida = gnidaMove(gnida);
+        } while (gnida == rememberLastBetPlayerIndex && currentBet == rememberLastBetPlayerBet);
+    }
+    private void Round() {
+        int rememberLastBetPlayerIndex;
+        int rememberLastBetPlayerBet;
+        Player hodok;
+        int gnida = table.button;
+        int currentBet = 0;
+        rememberLastBetPlayerBet = currentBet;
+        rememberLastBetPlayerIndex = gnida;
+        gnida = gnidaMove(gnida);
+        do {
+            hodok = table.players[gnida];
+            //Калян, напиши тут код, который пошлет запрос игроку gnida запрос на ход
+            hodok.sendUTF("You turn");
+            // ждем ответа от игрока гнида
+            int massage;
+            massage = hodok.GetInt();
+            if (massage == -1) {
+                hodok.Fold();
+                System.out.println(hodok.getLogin() + " fold");
+                controller.fold(hodok);
+            } else {
+                if (massage == 0) {
+                    System.out.println(hodok.getLogin() + " check/call");
+                    table.bank += currentBet;
+                    hodok.takeMoney(currentBet);
+                    controller.setBankroll(hodok);
+                    controller.setBet(hodok);
+                    System.out.println("Bank" + table.bank);
+                    controller.setBank(table.bank);
+                } else {
+                    System.out.println(hodok.getLogin()+ " rize " + massage + "BB");
+                    currentBet = massage;
+                    rememberLastBetPlayerIndex = hodok.getPosition();
+                    rememberLastBetPlayerBet = currentBet;
+                    table.bank += currentBet;
+                    hodok.takeMoney(massage);
+                    controller.setBankroll(hodok);
+                    controller.setBet(hodok);
+                    System.out.println("Bank" + table.bank);
+                    controller.setBank(table.bank);
+                }
+            }
+            gnida = gnidaMove(gnida);
+        } while (gnida == rememberLastBetPlayerIndex && currentBet == rememberLastBetPlayerBet);
     }
 
     private int gnidaMove (int g) {
@@ -160,7 +224,7 @@ public class Dealer {
         do {
             gTmp++;
             gTmp =  gTmp % 6;
-        } while (table.players[gTmp] == null || !table.players[gTmp].isInGame);
+        } while (!table.players[gTmp].isInGame);
         return gTmp;
     }
 }
