@@ -79,13 +79,15 @@ public class Dealer {
             ResetDeck();
             //блайнды
             DealHands();
+            //DealFlop();//--------------------tut ydalit
+            //controller.setFlop(table.commonCards.flop.c1, table.commonCards.flop.c2, table.commonCards.flop.c3);//------
             //Префлоп
             System.out.println("Preflop started");
             Round1();
             System.out.println("Preflop end");
             DealFlop();
             System.out.println("Postflop started");
-            controller.setFlop(table.commonCards.flop.c1, table.commonCards.flop.c1, table.commonCards.flop.c3);
+            controller.setFlop(table.commonCards.flop.c1, table.commonCards.flop.c2, table.commonCards.flop.c3);
             //Постфлоп
             Round();
             System.out.println("Postflop ended");
@@ -124,6 +126,7 @@ public class Dealer {
         controller.setBankroll(hodok);
         controller.setBet(hodok);
         gnida = gnidaMove(gnida);
+        hodok = table.players[gnida];
         //bb
         System.out.println(hodok.getLogin() + " is Big Blind");
         System.out.println("Bank" + table.bank);
@@ -228,3 +231,8 @@ public class Dealer {
         return gTmp;
     }
 }
+
+
+
+
+
