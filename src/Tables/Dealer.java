@@ -14,14 +14,17 @@ public class Dealer {
     private Controller controller;
     private Table table;
     private Deck deck;
+    private Player hodor;
+    private int lbpi;
+    private int lbpb;
 
-    public Dealer () {
+    public Dealer() {
         table = new Table();
         controller = new Controller(table.players);
         deck = new Deck();
     }
 
-    public void seatClients () {
+    public void seatClients() {
         //добавляем нового игрока
         Server server = new Server();
         Player[] players = server.ConnectPlayers();
@@ -46,189 +49,184 @@ public class Dealer {
         }
         controller.resetPlayers(table.players);
     }
-
-    public void ResetDeck() {
+    public void resetDeck() {
         deck.reset();
     }
-    public void DealFlop () {
+    public void dealFlop() {
         table.DealFlop(deck.retrieve(), deck.retrieve(), deck.retrieve());
+        controller.setFlop(table.commonCards.flop.c1, table.commonCards.flop.c2, table.commonCards.flop.c3);
     }
-    public void DealTurn () {
+    public void dealTurn() {
         table.DealTurn(deck.retrieve());
+        controller.setTurn(table.commonCards.turn);
     }
-    public void DealRiver () {
+    public void dealRiver() {
         table.DealRiver(deck.retrieve());
+        controller.setRiver(table.commonCards.river);
     }
-    public void DealHands () {
+    public void dealHands() {
         for (int i = 0; i < 6; i++) {
             //if (table.players[i] != null) {
             if (table.players[i].getPosition() != -1) {
                 Hand h = new Hand(deck.retrieve(), deck.retrieve());
                 controller.setHand(table.players[i], h);
-                //table.players[i].GiveAHand(h);
+                table.players[i].GiveAHand(h);
                 table.players[i].isInGame = true;
             }
         }
     }
-    public void Play () {
-        //добавить игроков
-        //----------------
-        table.bank = 0;
-        while (true) {//розигрыш
-            table.bank = 0;
-            ResetDeck();
-            //блайнды
-            DealHands();
-            //DealFlop();//--------------------tut ydalit
-            //controller.setFlop(table.commonCards.flop.c1, table.commonCards.flop.c2, table.commonCards.flop.c3);//------
-            //Префлоп
-            System.out.println("Preflop started");
-            Round1();
-            System.out.println("Preflop end");
-            DealFlop();
-            System.out.println("Postflop started");
-            controller.setFlop(table.commonCards.flop.c1, table.commonCards.flop.c2, table.commonCards.flop.c3);
-            //Постфлоп
-            Round();
-            System.out.println("Postflop ended");
-            DealTurn();
-            System.out.println("Turn started");
-            controller.setTurn(table.commonCards.turn);
-            //Тёрн
-            Round();
-            System.out.println("Turn finished");
-            DealRiver();
-            System.out.println("River started");
-            controller.setTurn(table.commonCards.river);
-            //Ривер
-            Round();
-            System.out.println("Kto pobedil sami reshayte");
-            //Вскрытие
-            //Покидает ли кто-нибудь стол?
-            //Садится ли кто-нибудь?
-            table.ButtonMove();
+    public void setBank(int b) {
+        table.setBank(b);
+        controller.setBank(b);
+    }
+    private boolean rize(Player p, int b) {
+        if (b > table.getCurrentBet() && b <= hodor.getBankroll() + hodor.getBet()) {
+            System.out.println(hodor.getLogin() + " rize " + b + "BB");
+            table.addToBank(b - p.getBet());
+            p.takeMoney(b - p.getBet());
+            table.setCurrentBet(b);
+            controller.setBankroll(p);
+            controller.setBet(p);
+            controller.setBank(table.getBank());
+            lbpb = b;
+            lbpi = p.getPosition();
+            return true;
+        } else {
+            return false;
         }
     }
-    private void Round1() {
-        int rememberLastBetPlayerIndex;
-        int rememberLastBetPlayerBet;
-        Player hodok;
-        int gnida = table.button;
-        int currentBet = 0;
-        gnida = gnidaMove(gnida);
-        hodok = table.players[gnida];
-        //sb
-        System.out.println(hodok.getLogin() + " is Small Blind");
-        System.out.println("Bank" + table.bank);
-        controller.setBank(table.bank);
-        hodok.sendUTF("small blind");
-        hodok.takeMoney(table.BB / 2);
-        controller.setBankroll(hodok);
-        controller.setBet(hodok);
-        gnida = gnidaMove(gnida);
-        hodok = table.players[gnida];
-        //bb
-        System.out.println(hodok.getLogin() + " is Big Blind");
-        System.out.println("Bank" + table.bank);
-        controller.setBank(table.bank);
-        hodok.sendUTF("big blind");
-        hodok.takeMoney(table.BB);
-        controller.setBankroll(hodok);
-        controller.setBet(hodok);
-        currentBet = table.BB;
-        table.bank += currentBet;
-        rememberLastBetPlayerBet = currentBet;
-        rememberLastBetPlayerIndex = gnida;
-        gnida = gnidaMove(gnida);
-        do {
-            hodok = table.players[gnida];
-            //Калян, напиши тут код, который пошлет запрос игроку gnida запрос на ход
-            hodok.sendUTF("You turn");
-            // ждем ответа от игрока гнида
-            int massage;
-            massage = hodok.GetInt();
-            if (massage == -1) {
-                hodok.Fold();
-                System.out.println(hodok.getLogin() + " fold");
-                controller.fold(hodok);
-            } else {
-                if (massage == 0) {
-                    System.out.println(hodok.getLogin() + " check/call");
-                    table.bank += currentBet;
-                    hodok.takeMoney(currentBet);
-                    controller.setBankroll(hodok);
-                    controller.setBet(hodok);
-                    System.out.println("Bank" + table.bank);
-                    controller.setBank(table.bank);
-                } else {
-                    System.out.println(hodok.getLogin()+ " rize " + massage + "BB");
-                    currentBet = massage;
-                    rememberLastBetPlayerIndex = hodok.getPosition();
-                    rememberLastBetPlayerBet = currentBet;
-                    table.bank += currentBet;
-                    hodok.takeMoney(massage);
-                    controller.setBankroll(hodok);
-                    controller.setBet(hodok);
-                    System.out.println("Bank" + table.bank);
-                    controller.setBank(table.bank);
-                }
-            }
-            gnida = gnidaMove(gnida);
-        } while (gnida == rememberLastBetPlayerIndex && currentBet == rememberLastBetPlayerBet);
+    private void fold(Player p) {
+        hodor.Fold();
+        System.out.println(hodor.getLogin() + " fold");
+        controller.fold(hodor);
     }
-    private void Round() {
-        int rememberLastBetPlayerIndex;
-        int rememberLastBetPlayerBet;
-        Player hodok;
-        int gnida = table.button;
-        int currentBet = 0;
-        rememberLastBetPlayerBet = currentBet;
-        rememberLastBetPlayerIndex = gnida;
-        gnida = gnidaMove(gnida);
-        do {
-            hodok = table.players[gnida];
-            //Калян, напиши тут код, который пошлет запрос игроку gnida запрос на ход
-            hodok.sendUTF("You turn");
-            // ждем ответа от игрока гнида
-            int massage;
-            massage = hodok.GetInt();
-            if (massage == -1) {
-                hodok.Fold();
-                System.out.println(hodok.getLogin() + " fold");
-                controller.fold(hodok);
-            } else {
-                if (massage == 0) {
-                    System.out.println(hodok.getLogin() + " check/call");
-                    table.bank += currentBet;
-                    hodok.takeMoney(currentBet);
-                    controller.setBankroll(hodok);
-                    controller.setBet(hodok);
-                    System.out.println("Bank" + table.bank);
-                    controller.setBank(table.bank);
-                } else {
-                    System.out.println(hodok.getLogin()+ " rize " + massage + "BB");
-                    currentBet = massage;
-                    rememberLastBetPlayerIndex = hodok.getPosition();
-                    rememberLastBetPlayerBet = currentBet;
-                    table.bank += currentBet;
-                    hodok.takeMoney(massage);
-                    controller.setBankroll(hodok);
-                    controller.setBet(hodok);
-                    System.out.println("Bank" + table.bank);
-                    controller.setBank(table.bank);
-                }
+    private boolean check(Player p) {
+        if (p.getBankroll() + p.getBet() < table.getCurrentBet()) {
+            return false;
+        } else {
+            System.out.println(hodor.getLogin() + " check/call");
+            table.addToBank(table.getCurrentBet() - hodor.getBet());
+            hodor.takeMoney(table.getCurrentBet() - hodor.getBet());
+            controller.setBankroll(hodor);
+            controller.setBet(hodor);
+            System.out.println("Bank" + table.getBank());
+            controller.setBank(table.getBank());
+            return true;
+        }
+    }
+    private void win(Player p, int w) {
+        p.giveMoney(w);
+        controller.setBankroll(p);
+    }
+    private void setBets() {
+        for (int i = 0; i < 6; i++) {
+            if (table.players[i].getPosition() != -1) {
+                table.players[i].setBet(0);
+                controller.setBet(table.players[i]);
             }
-            gnida = gnidaMove(gnida);
-        } while (gnida == rememberLastBetPlayerIndex && currentBet == rememberLastBetPlayerBet);
+        }
+    }
+    private void init() {
+        setBank(0);
+        setBets();
+        resetDeck();
+        controller.initCards();
+    }
+    public void Play() {
+        while (true) {
+            //init();
+            System.out.println("Preflop started");
+            preflop();
+            System.out.println("Preflop end");
+            dealFlop();
+            System.out.println("Postflop started");
+            round();
+            System.out.println("Postflop ended");
+            dealTurn();
+            System.out.println("Turn started");
+            round();
+            System.out.println("Turn finished");
+            dealRiver();
+            System.out.println("River started");
+            round();
+            System.out.println("END");
+            table.ButtonMove();
+            //кто - то выиграл
+            win(hodor, table.getBank());
+        }
     }
 
-    private int gnidaMove (int g) {
-        int gTmp = g;
+    private void blinds() {
+        setBets();
+        hodor = table.players[table.button];
+        setHodorOnButton();
+        hodorNext();
+        System.out.println(hodor.getLogin() + " is Small Blind");
+        rize(hodor, table.BB / 2);
+        hodorNext();
+        System.out.println(hodor.getLogin() + " is Big Blind");
+        rize(hodor, table.BB);
+        hodorNext();
+    }
+
+    private void preflop() {
+        blinds();
+        dealHands();
+        round();
+        /*hodorNext();
+        hodorNext();
+        lbpi = hodor.getPosition();
+        lbpb = 2;
+        round();*/
+    }
+
+    private void round() {
+        do {
+            handleAction();
+            hodorNext();
+        } while (!(hodor.getPosition() == lbpi && table.getCurrentBet() == lbpb) && playersCount() != 0);
+        setHodorOnButton();
+        lbpi = table.button;
+        lbpb = 0;
+        hodorNext();
+    }
+
+    private int playersCount() {
+        int c = 0;
+        for (int i = 0; i < 6; i++)
+            if (table.players[i].isInGame)
+                c ++;
+        return c;
+    }
+
+    private void handleAction() {
+        int action = hodor.action();
+        if (action == -1) {
+            fold(hodor);
+        } else {
+            if (action == 0) {
+                if (!check(hodor))
+                    handleAction();
+            } else {
+                if (!rize(hodor, action))
+                    handleAction();
+                //lastBetPlayerIndex = hodor.getPosition();
+                //lastBetPlayerBet = table.getCurrentBet();
+            }
+        }
+    }
+
+    private void setHodorOnButton() {
+        hodor = table.players[table.button];
+    }
+
+    private void hodorNext() {
+        int gTmp = hodor.getPosition();
         do {
             gTmp++;
-            gTmp =  gTmp % 6;
+            gTmp = gTmp % 6;
         } while (!table.players[gTmp].isInGame);
-        return gTmp;
+        hodor = table.players[gTmp];
     }
 }
 

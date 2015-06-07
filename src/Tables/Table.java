@@ -14,7 +14,8 @@ public class Table {
     public CommonCards commonCards;
     public Player[] players;
     public int button;
-    public int bank;
+    private int bank;
+    private int currentBet;
 
     public Table() {
         BB = 2;
@@ -31,7 +32,18 @@ public class Table {
         //    players[p.GetPosition()] = p;
         //}
     }
-
+    public void addToBank (int b) {
+        bank += b;
+    }
+    public int getCurrentBet() {
+        return currentBet;
+    }
+    public void setCurrentBet(int b) {
+        currentBet = b;
+    }
+    public int getBank () {
+        return bank;
+    }
     public void addPlayers (Player... players) {
         //for (int i = 0; i < players.length; i++) {
             //players[i] = new Player();
@@ -39,6 +51,9 @@ public class Table {
             //addPlayer(players[i]);
         //}
         this.players = players;
+    }
+    public void setBank (int b) {
+        bank = b;
     }
     public void DealFlop (Card c1, Card c2, Card c3) {
         commonCards.SetFlop(c1, c2, c3);

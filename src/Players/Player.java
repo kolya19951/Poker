@@ -129,11 +129,11 @@ public class Player {
     public void GiveAHand(Hand h) {
         hand = h;
         // Калян, напиши тут код, который пошлет этому игроку его карты
-        try {
+        /*try {
             out.writeUTF(h.toString());
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public int getBankroll () {
@@ -150,7 +150,7 @@ public class Player {
         }*/
     }
 
-    public void giveAMoney(int m) {
+    public void giveMoney(int m) {
         bankroll += m;
         try {
             out.writeUTF("you money");
@@ -158,6 +158,11 @@ public class Player {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int action () {
+        sendUTF("You turn");
+        return GetInt();
     }
 
     public void takeMoney(int m) {
@@ -180,5 +185,9 @@ public class Player {
     public void Fold() {
         hand = null;
         isInGame = false;
+    }
+
+    public void setBet (int b) {
+        bet = 0;
     }
 }

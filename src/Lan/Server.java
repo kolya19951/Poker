@@ -5,6 +5,7 @@ import Players.Player;
 
 import javax.swing.*;
 public class Server {
+    final int PLAYERS_COUNT = 3;
     public Player[] ConnectPlayers()    {
         SocketServer sock = new SocketServer();
         MainForm frame = new MainForm(sock);
@@ -17,7 +18,7 @@ public class Server {
             do {
                 sock.players[sock.count].setPlayer(sock.ss.accept(), sock.count);
                 sock.count++;
-            } while (sock.count != 2);
+            } while (sock.count != PLAYERS_COUNT);
         }catch(Exception x) { x.printStackTrace(); }
         System.out.println("Game start!");
         return sock.players;
