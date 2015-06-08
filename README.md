@@ -12,4 +12,4 @@ Denis Drabchuk, Kolya Syotyuk, Nazar Nuzhnyk
 
 ## Class diagram
 
-![Class diagram](Tables.uml)
+!![Alt-Class diagram](Tables.uml)
