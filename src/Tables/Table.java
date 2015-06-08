@@ -1,9 +1,6 @@
 package Tables;
 
-import Cards.Card;
-import Cards.CommonCards;
-import Cards.Deck;
-import Cards.Hand;
+import Cards.*;
 import Players.Player;
 
 /**
@@ -67,8 +64,8 @@ public class Table {
     public void ButtonMove () {
         do {
             button++;
-            button =  button % 9;
-        } while (players[button] == null);
+            button =  button % 6;
+        } while (players[button].getPosition() == -1);
     }
     /*public void ShowCards () {
         System.out.println("flop : ");

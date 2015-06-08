@@ -5,7 +5,7 @@ import Players.Player;
 
 import javax.swing.*;
 public class Server {
-    final int PLAYERS_COUNT = 3;
+    final int PLAYERS_COUNT = 2;
     public Player[] ConnectPlayers()    {
         SocketServer sock = new SocketServer();
         MainForm frame = new MainForm(sock);

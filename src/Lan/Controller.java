@@ -3,9 +3,6 @@ package Lan;
 import Cards.*;
 import Players.Player;
 
-/**
- * Created by Денис on 22.05.2015.
- */
 public class Controller {
     private Player[] players;
 
@@ -39,9 +36,9 @@ public class Controller {
 
     public void setBet(Player p) {
         for (int i = 0; i < 6; i++) {
-            if (players[i].isInGame) {
+            if (players[i].getPosition() != -1) {
                 players[i].sendUTF("change");
-                players[i].sendInt(p.GetPosition());//тут могут быть ошибки с позицией
+                players[i].sendInt(p.GetPosition());
                 players[i].sendUTF("bet");
                 players[i].sendInt(p.getBet());
             }
@@ -68,9 +65,9 @@ public class Controller {
         for (int i = 0; i < 6; i++) {
             if (players[i].isInGame) {
                 players[i].sendUTF("change");
-                players[i].sendInt(p.GetPosition());//тут могут быть ошибки с позицией
+                players[i].sendInt(p.GetPosition());//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 players[i].sendUTF("hand");
-                players[i].sendUTF("null");
+                players[i].sendUTF("null");//trans!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 players[i].sendUTF("null");
             }
         }

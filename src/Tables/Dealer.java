@@ -1,5 +1,6 @@
 package Tables;
 
+import Cards.CollectionCards;
 import Cards.Deck;
 import Cards.Hand;
 import Lan.Controller;
@@ -15,8 +16,8 @@ public class Dealer {
     private Table table;
     private Deck deck;
     private Player hodor;
-    private int lbpi;
-    private int lbpb;
+    private int laslBetPlayerIndex;
+    private int lastBetPlayerBet;
 
     public Dealer() {
         table = new Table();
@@ -29,6 +30,10 @@ public class Dealer {
         Server server = new Server();
         Player[] players = server.ConnectPlayers();
         table.addPlayers(players);
+        for (int i = 0; i < 6; i++) {
+            if (players[i].getPosition() != -1)
+                players[i].sendUTF("connect");
+        }
         for (int i = 0; i < 6; i++) {
             //if (table.players[i] != null) {
             if (table.players[i].getPosition() != -1) {
@@ -88,8 +93,8 @@ public class Dealer {
             controller.setBankroll(p);
             controller.setBet(p);
             controller.setBank(table.getBank());
-            lbpb = b;
-            lbpi = p.getPosition();
+            lastBetPlayerBet = b;
+            laslBetPlayerIndex = p.getPosition();
             return true;
         } else {
             return false;
@@ -114,11 +119,11 @@ public class Dealer {
             return true;
         }
     }
-    private void win(Player p, int w) {
-        p.giveMoney(w);
+    private void win(Player p) {
+        p.giveMoney(table.getBank());
         controller.setBankroll(p);
     }
-    private void setBets() {
+    private void setBets(){
         for (int i = 0; i < 6; i++) {
             if (table.players[i].getPosition() != -1) {
                 table.players[i].setBet(0);
@@ -127,38 +132,66 @@ public class Dealer {
         }
     }
     private void init() {
+        table.ButtonMove();
         setBank(0);
         setBets();
         resetDeck();
         controller.initCards();
     }
+    private void setCombinations() {
+        for (int i = 0; i < 6; i++) {
+            if (table.players[i].isInGame) {
+                table.players[i].setCombination(table.players[i].getHand().c1, table.players[i].getHand().c2, table.commonCards.flop.c1, table.commonCards.flop.c2, table.commonCards.flop.c3);
+            }
+        }
+    }
     public void Play() {
         while (true) {
-            //init();
+            init();
             System.out.println("Preflop started");
-            preflop();
+            if (preflop()) {
+                win(hodor);
+                continue;
+            }
+
             System.out.println("Preflop end");
             dealFlop();
+            setCombinations();
+            for (int i = 0; i < 6; i++) {
+                if (table.players[i].isInGame) {
+                    System.out.println(table.players[i].getCombination());
+                }
+            }
             System.out.println("Postflop started");
-            round();
+            if (round()) {
+                win(hodor);
+                continue;
+            }
+
             System.out.println("Postflop ended");
             dealTurn();
             System.out.println("Turn started");
-            round();
+            if (round()) {
+                win(hodor);
+                continue;
+            }
+
             System.out.println("Turn finished");
             dealRiver();
             System.out.println("River started");
-            round();
+            if (round()) {
+                win(hodor);
+                continue;
+            }
+
             System.out.println("END");
-            table.ButtonMove();
             //кто - то выиграл
-            win(hodor, table.getBank());
+            win(hodor);
         }
     }
 
     private void blinds() {
         setBets();
-        hodor = table.players[table.button];
         setHodorOnButton();
         hodorNext();
         System.out.println(hodor.getLogin() + " is Small Blind");
@@ -168,37 +201,67 @@ public class Dealer {
         rize(hodor, table.BB);
         hodorNext();
     }
-
-    private void preflop() {
+    private boolean preflop() {
         blinds();
         dealHands();
-        round();
-        /*hodorNext();
-        hodorNext();
-        lbpi = hodor.getPosition();
-        lbpb = 2;
-        round();*/
-    }
-
-    private void round() {
         do {
             handleAction();
             hodorNext();
-        } while (!(hodor.getPosition() == lbpi && table.getCurrentBet() == lbpb) && playersCount() != 0);
-        setHodorOnButton();
-        lbpi = table.button;
-        lbpb = 0;
-        hodorNext();
+        }
+        while (!(hodor.getPosition() == laslBetPlayerIndex && table.getCurrentBet() == lastBetPlayerBet) && playersCount() != 1);
+        if (playersCount() == 1) {
+            return true;
+        } else {
+            if (lastBetPlayerBet == 2) {
+                laslBetPlayerIndex = hodorNextIndex();
+                do {
+                    handleAction();
+                    hodorNext();
+                }
+                while (!(hodor.getPosition() == laslBetPlayerIndex && table.getCurrentBet() == lastBetPlayerBet) && playersCount() != 1);
+                if (playersCount() == 1) {
+                    return true;
+                } else {
+                    setBets();
+                    setHodorOnButton();
+                    laslBetPlayerIndex = table.button;
+                    lastBetPlayerBet = 0;
+                    hodorNext();
+                    return false;
+                }
+            }
+            setBets();
+            setHodorOnButton();
+            laslBetPlayerIndex = table.button;
+            lastBetPlayerBet = 0;
+            hodorNext();
+            return false;
+        }
     }
-
+    private boolean round() {
+        do {
+            handleAction();
+            hodorNext();
+        }
+        while (!(hodor.getPosition() == laslBetPlayerIndex && table.getCurrentBet() == lastBetPlayerBet) && playersCount() != 1);
+        if (playersCount() == 1) {
+            return true;
+        } else {
+            setBets();
+            setHodorOnButton();
+            laslBetPlayerIndex = table.button;
+            lastBetPlayerBet = 0;
+            hodorNext();
+            return false;
+        }
+    }
     private int playersCount() {
         int c = 0;
         for (int i = 0; i < 6; i++)
             if (table.players[i].isInGame)
-                c ++;
+                c++;
         return c;
     }
-
     private void handleAction() {
         int action = hodor.action();
         if (action == -1) {
@@ -215,11 +278,9 @@ public class Dealer {
             }
         }
     }
-
     private void setHodorOnButton() {
         hodor = table.players[table.button];
     }
-
     private void hodorNext() {
         int gTmp = hodor.getPosition();
         do {
@@ -227,6 +288,14 @@ public class Dealer {
             gTmp = gTmp % 6;
         } while (!table.players[gTmp].isInGame);
         hodor = table.players[gTmp];
+    }
+    private int hodorNextIndex() {
+        int gTmp = hodor.getPosition();
+        do {
+            gTmp++;
+            gTmp = gTmp % 6;
+        } while (!table.players[gTmp].isInGame);
+        return gTmp;
     }
 }
 

@@ -1,5 +1,7 @@
 package Players;
 
+import Cards.Card;
+import Cards.CollectionCards;
 import Cards.Hand;
 
 import java.io.*;
@@ -21,6 +23,7 @@ public class Player {
     private int position;
     private int bankroll;
     private int bet;
+    private CollectionCards collection;
 
     public Player() {
         isInGame = false;
@@ -30,11 +33,22 @@ public class Player {
         bet = 0;
     }
 
+    public String getCombination() {
+        return collection.checkCombination();
+    }
+
+    public void setCombination(Card... cards) {
+        collection = new CollectionCards(cards);
+    }
+
     public String getLogin() {
         return login;
     }
     public int getPosition() {
         return position;
+    }
+    public Hand getHand() {
+        return hand;
     }
 
     public void Init() {
@@ -61,7 +75,7 @@ public class Player {
     }
 
     public boolean readBoolean() {
-        boolean b = false;
+        boolean b;
         try {
             b = in.readBoolean();
         } catch (IOException e) {
