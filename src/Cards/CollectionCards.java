@@ -6,7 +6,7 @@ public class CollectionCards {
     boolean[][] table = new boolean[14][4];
     byte[] flashDataMas = new byte[4];
     boolean[] straightDataMas = new boolean[15];
-    byte[] pairDataMas = new byte[14];//how many cards with same rank in combination
+    byte[] pairDataMas = new byte[14];//how many cards with same rank in combination, 0 & 13 aces
     byte sameSuitMax;
     byte sameSuitMaxIndex;
     //public bool flashID;
@@ -168,14 +168,52 @@ public class CollectionCards {
         }
 
         if (counter[1] > 0)
-            if (counter[2] > 0)
-                return "Full house";
-            else if (counter[1] == 1)
-                return "Pair";
-            else
-                return "Two pairs";
-        else if (counter[2] > 0)
-            return "Set";
+            if (counter[2] > 0) {
+                int maxSetId = 1, maxPairId = 1;
+                for (int i = 1; i < 14; i++) {
+                    if (pairDataMas[i] == 3) {
+                        maxSetId = i;
+                    } else {
+                        if (pairDataMas[i] == 2) {
+                            if (maxPairId < i) {
+                                maxPairId = i;
+                            }
+                        }
+                    }
+                }
+                return String.format("Full house %d %d %d %d %d", maxSetId + 1, maxSetId + 1, maxSetId + 1, maxPairId + 1, maxPairId + 1);
+            } else {
+                int i = 0;
+                if (counter[1] == 1) {
+                    do {
+                        i++;
+                    } while (pairDataMas[i] == 2);
+                    return String.format("Pair of %d", i + 1);
+                } else {
+                    int maxPair1 = 1;
+                    int maxPair2 = 2;
+                    for (int j = 1; j < 14; j++) {
+                        if (pairDataMas[i] > maxPair1) {
+                            if (pairDataMas[i] > maxPair2) {
+                                maxPair2 = pairDataMas[i];
+                            } else {
+                                maxPair1 = pairDataMas[i];
+                            }
+                        }
+                    }
+                    return String.format("Two pairs %d and %d", maxPair1, maxPair2);
+                }
+            }
+
+        else {
+            if (counter[2] > 0) {
+                int i = 1;
+                do {
+                    i++;
+                } while (pairDataMas[i] != 3);
+                return String.format("Set of %d", i + 1);
+            }
+        }
         return "Kicker";
     }
 

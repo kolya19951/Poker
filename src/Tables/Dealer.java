@@ -30,10 +30,10 @@ public class Dealer {
         Server server = new Server();
         Player[] players = server.ConnectPlayers();
         table.addPlayers(players);
-        for (int i = 0; i < 6; i++) {
+        /*for (int i = 0; i < 6; i++) {
             if (players[i].getPosition() != -1)
                 players[i].sendUTF("connect");
-        }
+        }*/
         for (int i = 0; i < 6; i++) {
             //if (table.players[i] != null) {
             if (table.players[i].getPosition() != -1) {
