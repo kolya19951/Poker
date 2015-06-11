@@ -2,9 +2,9 @@
 
 ## Description
 
-Покер - інтерактивна карткова азартна гра, розрахована на багатьох гравців. Є багато варіацій гри, для нашої програми ми вибрали найпоширенішу версію - техаський холдем. Ця гра покорили собою багато поколінь картярів і продовжує набирати все більше і більше прихильників по цілій землі. 
-За допомогою нашої програми, кожен користувач зможе відчути себе істинним гравцем та переживати ті самі відчуття, як і під час "гри вживу". Був виконаний також варіант "мережевої гри", тобто гри на різних комп'ютерах, підключених до однієї мережі. 
-Даний проект було реалізовано для того, щоб кожен гравець зміг повноцінно перекинутися партією-іншою зі своїми друзями. В подальшому планується web-проект і випуск програми в масове використання..
+Poker is an interactive gambling card game, designed for many players. There are lots of variations of the game, but for our program, we chose the most widespread version - 'Texas Hold'em'. This game has many followers and continues to gain more and more fans in all around the earth.
+With our program, each user can feel a true poker player and experience the same feeling as when "playing live". There was also made version of "online play", as a version to play on different computers connected to the same network.
+The project was implemented for each player to have a possibility to play with his friends. In the future web-design and mass production of the program will be made.
 
 ## Authors
 
