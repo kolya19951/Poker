@@ -10,6 +10,8 @@ The project was implemented for each player to have a possibility to play with h
 
 Denis Drabchuk, Kolya Symotyuk, Nazar Nuzhnyk
 
+Денис Драбчук, Микола Симотюк, Назарій Нижник
+
 ## Class diagram
 
 !![Alt-Class diagram](diagram.png "Class diagram")
